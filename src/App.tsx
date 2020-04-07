@@ -1,26 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Switch, withRouter } from "react-router";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import { Helmet } from "react-helmet";
+import { withCookies } from "react-cookie";
+
+import HomePage from "pages/home/HomePage";
+import SellingPage from "pages/selling/SellingPage";
+import BuyingPage from "pages/buying/BuyingPage";
+import PresentPage from "pages/present/PresentPage";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Helmet>Cash Link</Helmet>
+      <Switch>
+        <Route exact path="/" component={HomePage} />
+        <Route exact path="/home" component={HomePage} />
+        <Route exact path="/selling" component={SellingPage} />
+        <Route exact path="/buying" component={BuyingPage} />
+        <Route exact path="/present" component={PresentPage} />
+      </Switch>
+    </Router>
   );
 }
 
-export default App;
+export default withCookies(withRouter(App));
