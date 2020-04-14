@@ -1,38 +1,77 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React from "react";
 import styled from "styled-components";
 
 import Header from "components/common/header";
 import Footer from "components/common/footer";
+import UserStore from "stores/users";
+import { inject, observer } from "mobx-react";
+import { withCookies, ReactCookieProps } from "react-cookie";
+import { withRouter, RouteComponentProps } from "react-router";
 
-interface Props {
+interface Props extends ReactCookieProps, RouteComponentProps {
   children?: React.ReactNode;
   stack?: boolean;
   navPage?: boolean;
   pageNum?: number;
+  userStore?: UserStore;
 }
 
-function BaseTemplate({ children, stack, navPage, pageNum }: Props) {
-  const [prevPos, setPrevPos] = useState<number>(window.pageYOffset);
-  const [visible, setVisible] = useState<boolean>(true);
+interface State {
+  prevPos: number;
+  visible: boolean;
+}
 
-  const handleScroll = useCallback(() => {
+@inject("userStore")
+@observer
+class BaseTemplate extends React.Component<Props, State> {
+  private UserStore = this.props.userStore! as UserStore;
+
+  state: State = {
+    prevPos: window.pageYOffset,
+    visible: true,
+  };
+
+  handleScroll = () => {
     const currentPos = window.pageYOffset;
-    const vis = prevPos > currentPos;
-    setPrevPos(currentPos);
-    setVisible(vis);
-  }, [prevPos]);
+    const vis = this.state.prevPos > currentPos;
 
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-  }, [handleScroll]);
+    if (currentPos > 0) {
+      this.setState({
+        prevPos: currentPos,
+        visible: vis,
+      });
+    }
+  };
 
-  return (
-    <Wrap>
-      <Header visible={visible} stack={stack} navPage={navPage}></Header>
-      <Section>{children}</Section>
-      <Footer visible={visible} pageNum={pageNum}></Footer>
-    </Wrap>
-  );
+  logout = async () => {
+    this.UserStore.logout();
+    this.props.cookies!.remove("auth", { path: "/" });
+    this.props.history.push("/");
+  };
+
+  componentDidMount() {
+    window.addEventListener("scroll", this.handleScroll);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.handleScroll);
+  }
+
+  render() {
+    return (
+      <Wrap>
+        <Header
+          visible={this.state.visible}
+          stack={this.props.stack}
+          navPage={this.props.navPage}
+          user={this.UserStore.User}
+          logout={this.logout}
+        ></Header>
+        <Section>{this.props.children}</Section>
+        <Footer visible={this.state.visible} pageNum={this.props.pageNum}></Footer>
+      </Wrap>
+    );
+  }
 }
 
 const Wrap = styled.div``;
@@ -56,4 +95,4 @@ const Section = styled.div`
     `}
 `;
 
-export default BaseTemplate;
+export default withCookies(withRouter(BaseTemplate));

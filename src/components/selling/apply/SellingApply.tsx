@@ -10,7 +10,7 @@ function SellingApply() {
         <section>
           <div className="inBox">
             <div className="pcOut">
-              <img src={TmpIcon} />
+              <img src={TmpIcon} alt="" />
               <div className="boxR">
                 <span>
                   나의 보유딜링<em>(DLC)</em>
@@ -32,7 +32,7 @@ function SellingApply() {
             </p>
             <p className="boxC">
               <input type="text" />
-              <img src={TmpIcon} />
+              <img src={TmpIcon} alt="" />
             </p>
           </li>
           <li>
@@ -50,7 +50,7 @@ function SellingApply() {
             </p>
             <p className="boxC">
               <input type="text" />
-              <img src={TmpIcon} />
+              <img src={TmpIcon} alt="" />
             </p>
             <p className="boxR">
               <button className="qtyPlus"></button>

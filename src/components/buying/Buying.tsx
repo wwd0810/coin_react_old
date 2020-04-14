@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 import BuyingManage from "components/buying/manage";
@@ -19,7 +19,7 @@ function Buying() {
 
   return (
     <Wrap>
-      <h2>판매하기</h2>
+      <h2>구매하기</h2>
       <div className="tabsWrap">
         <ul className="tabs">
           {navMenu.map((data, idx) => (

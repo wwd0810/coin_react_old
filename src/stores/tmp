@@ -1,0 +1,19 @@
+import { observable, flow, computed, action } from "mobx";
+
+import BaseStore from "stores/BaseStore";
+import RootStore from "stores";
+import client from "lib/client";
+
+
+class tore extends BaseStore {
+  root: RootStore;
+
+  constructor(root: RootStore) {
+    super();
+    this.root = root;
+  }
+
+
+}
+
+export default Store;

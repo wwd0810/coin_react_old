@@ -1,36 +1,119 @@
-import React from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import styled from "styled-components";
 import AvgQuote from "components/common/avgQuote";
+
+import { Dealing, Paging } from "stores/market/types";
 
 import TmpIcon from "assets/tmp.png";
 import CoinList from "./coinList";
 
-function Home() {
+interface Props {
+  average: string;
+  dlList: Dealing[];
+  paging: Paging;
+  getList: (page: number, order: string, query?: string, more?: boolean) => void;
+}
+
+function Home({ average, dlList, paging, getList }: Props) {
+  const [state, setState] = useState({
+    search: "",
+    sort: "RECENT|DESC",
+    page: 0,
+    prePage: 0,
+    first: true,
+  });
+
+  const onSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault();
+      const { value } = e.target;
+      setState({ ...state, search: value });
+    },
+    [state],
+  );
+
+  const getSearchList = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+
+      getList(state.page, state.sort, state.search);
+    },
+    [getList, state.page, state.search, state.sort],
+  );
+
+  const getPageList = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      setState({ ...state, prePage: state.page, page: state.page + 1, first: false });
+
+      // getList(state.page + 1, state.sort, state.search, true);
+    },
+    [state],
+  );
+
+  const sortByRecent = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.preventDefault();
+
+      if (state.sort === "RECENT|DESC")
+        setState({ ...state, page: 0, prePage: 0, sort: "RECENT|ASC", first: false });
+      else setState({ ...state, page: 0, prePage: 0, sort: "RECENT|DESC", first: false });
+      // 이후 내림, 올림차순 정렬 필요
+    },
+    [state],
+  );
+
+  const sortByPrice = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.preventDefault();
+      if (state.sort === "PRICE|DESC")
+        setState({ ...state, page: 0, prePage: 0, sort: "PRICE|ASC", first: false });
+      else setState({ ...state, page: 0, prePage: 0, sort: "PRICE|DESC", first: false });
+      // 이후 내림, 올림차순 정렬 필요
+    },
+    [state],
+  );
+
+  useEffect(() => {
+    if (!state.first) {
+      if (state.prePage !== state.page) {
+        getList(state.page, state.sort, state.search, true);
+      } else {
+        getList(state.page, state.sort, state.search);
+      }
+    }
+  }, [getList, state.sort, state.page, state.search, state.first, state.prePage]);
+
   return (
     <Wrap>
-      <AvgQuote />
+      <AvgQuote avg={average} />
       <Content>
-        <form>
+        <form className="form" onSubmit={getSearchList}>
           <div className="listTopUtil">
             <div className="boxL">
-              <button>
+              <button onClick={sortByRecent}>
                 최신순
-                <img src={TmpIcon} />
+                <img src={TmpIcon} alt="" />
               </button>
-              <button>
+              <button onClick={sortByPrice}>
                 가격순
-                <img src={TmpIcon} />
+                <img src={TmpIcon} alt="" />
               </button>
             </div>
             <div className="boxR">
-              <input type="text" placeholder="딜링갯수 / 판매자ID 검색" />
+              <input
+                type="text"
+                placeholder="딜링갯수 / 판매자ID 검색"
+                value={state.search}
+                onChange={onSearchChange}
+              />
               <button type="button">
-                <img src={TmpIcon} />
+                <img src={TmpIcon} alt="" />
               </button>
             </div>
           </div>
         </form>
-        <CoinList />
+        <CoinList dlList={dlList} paging={paging} getList={getList} getPage={getPageList} />
       </Content>
     </Wrap>
   );
@@ -44,7 +127,7 @@ const Content = styled.div`
   padding: 10px 10px 20px;
   margin: 0 auto;
 
-    & > form {
+    & > .form {
         & > .listTopUtil {
         width: 100%;
         height: 42px;

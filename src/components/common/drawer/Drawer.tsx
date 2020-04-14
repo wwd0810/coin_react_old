@@ -1,26 +1,29 @@
-import React, { useCallback, useState } from "react";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import MTDrawer from "@material-ui/core/Drawer";
 
 import TmpIcon from "assets/tmp.png";
+import { User, Account } from "stores/users/types";
+import regex from "lib/regex";
+import { Link } from "react-router-dom";
 
 interface Props {
+  user: { user: User; account: Account };
   openDrawer: boolean;
   onClick: (open: boolean) => void;
+  userLogout: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
 }
 
-function Drawer({ openDrawer, onClick }: Props) {
-  // ========== 로그인 테스트용 ========== //
-  const [login, setLogin] = useState<boolean>(false);
-
-  const onLogin = useCallback(
-    (e: any) => {
-      e.preventDefault();
-      if (login) setLogin(false);
-      else setLogin(true);
-    },
-    [login],
-  );
+function Drawer({ openDrawer, onClick, user, userLogout }: Props) {
+  // const onLogin = useCallback(
+  //   (e: any) => {
+  //     e.preventDefault();
+  //     if (login) setLogin(false);
+  //     else setLogin(true);
+  //   },
+  //   [login],
+  // );
   // ================================= //
   const menus = ["우고스", "글로벌직구", "ONDLC 소개", "이용가이드"];
 
@@ -35,9 +38,8 @@ function Drawer({ openDrawer, onClick }: Props) {
   return (
     <MTDrawer open={openDrawer} onClose={tmp}>
       <Wrap>
-        {!login ? (
+        {!user ? (
           <>
-            {" "}
             <ul className="pc">
               {menus.map((data, idx) => (
                 <li key={idx}>
@@ -46,7 +48,7 @@ function Drawer({ openDrawer, onClick }: Props) {
               ))}
             </ul>
             <div className="beTit">
-              <img src={TmpIcon} />
+              <img src={TmpIcon} alt="1" />
               <h3>
                 안녕하세요.
                 <br />
@@ -54,7 +56,9 @@ function Drawer({ openDrawer, onClick }: Props) {
               </h3>
               <p>회원 서비스 이용을 위해 로그인 해주세요.</p>
             </div>
-            <a href="http://192.168.100.237:8080/oauth/authorize?client_id=cashlink&redirect_uri=http://192.168.100.228:3000/callback&response_type=code">
+            <a
+              href={`${process.env.REACT_APP_AUTH_API_BASE}/oauth/authorize?client_id=cashlink&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=code`}
+            >
               로그인
             </a>
           </>
@@ -65,25 +69,28 @@ function Drawer({ openDrawer, onClick }: Props) {
                 안녕하세요. ONDLC입니다.
                 <br />
                 <strong>
-                  징수진<em>님</em>
+                  {user.user.username}
+                  <em>님</em>
                 </strong>
               </p>
               <button>
-                <img src={TmpIcon} />
+                <img src={TmpIcon} alt="1" />
               </button>
             </div>
             <div className="myDlc">
-              <img src={TmpIcon} />
+              <img src={TmpIcon} alt="1" />
               <div className="boxR">
                 <span>
                   나의 보유딜링<em>(DLC)</em>
                 </span>
-                <p>100,000,000</p>
+                <p>{regex.moneyRegex(user.account.balance)}</p>
               </div>
-              <button>딜링 스마트 월렛 ></button>
+              <Link to="/my" className="myWallet">
+                딜링 스마트 월렛 >
+              </Link>
               <span className="bank">
                 나의계좌
-                <strong>QWRT8FGBA</strong>
+                <strong>{user.account.id}</strong>
               </span>
             </div>
             <ul className="mobile">
@@ -99,7 +106,9 @@ function Drawer({ openDrawer, onClick }: Props) {
                 <br />- <strong>이용시간(평일) :</strong> 10:00 ~ 18:30
               </p>
             </div>
-            <button className="btnLogout">로그아웃</button>
+            <a className="btnLogout" onClick={userLogout}>
+              로그아웃
+            </a>
           </>
         )}
       </Wrap>
@@ -348,7 +357,14 @@ const Wrap = styled.div`
       }
     }
 
-    & > button {
+    & > .myWallet {
+      word-spacing: normal;
+      text-transform: none;
+      text-indent: 0px;
+      text-shadow: none;
+      display: inline-block;
+      text-align: center;
+      align-items: flex-start;
       clear: both;
       width: 155px;
       height: 28px;

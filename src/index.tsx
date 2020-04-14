@@ -8,18 +8,24 @@ import theme from "./styles/theme";
 import { ThemeProvider } from "styles/theme-components";
 import { BrowserRouter as Router } from "react-router-dom";
 import { CookiesProvider } from "react-cookie";
+import { Provider } from "mobx-react";
 // import "react-app-polyfill/ie9"; // For IE 9-11 support
 import "react-app-polyfill/ie11";
-import "react-app-polyfill/stable"; // For IE 11 support
+
+import RootStore from "stores";
+
+const stores = new RootStore();
 
 ReactDOM.render(
   <>
     <CookiesProvider>
       <GlobalStyle />
       <ThemeProvider theme={theme}>
-        <Router>
-          <App />
-        </Router>
+        <Provider {...stores}>
+          <Router>
+            <App />
+          </Router>
+        </Provider>
       </ThemeProvider>
     </CookiesProvider>
   </>,

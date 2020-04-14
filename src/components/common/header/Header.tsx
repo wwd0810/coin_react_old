@@ -1,18 +1,25 @@
+/* eslint-disable no-restricted-globals */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useCallback } from "react";
 import styled from "styled-components";
 import classnames from "classnames";
+import { Link } from "react-router-dom";
+
 import Drawer from "components/common/drawer";
 
 import TmpIcon from "assets/tmp.png";
-import { Link } from "react-router-dom";
+import { User, Account } from "stores/users/types";
 
 interface Props {
+  user?: { user: User; account: Account };
   stack?: boolean;
   navPage?: boolean;
   visible?: boolean;
+  onPrev?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  logout?: () => void;
 }
 
-function Header({ stack = false, navPage = true, visible }: Props) {
+function Header({ stack = false, navPage = true, visible, onPrev, user, logout }: Props) {
   const menus = [
     { uri: "/selling", img: TmpIcon, name: "판매하기" },
     { uri: "/buying", img: TmpIcon, name: "구매하기" },
@@ -20,13 +27,13 @@ function Header({ stack = false, navPage = true, visible }: Props) {
   ];
   const [open, setOpen] = useState<boolean>(false);
   const utilMenus = [
-    "마이월렛",
-    "알림센터",
-    "우고스",
-    "글로벌직구",
-    "ONDLC 소개",
-    "이용가이드",
-    "고객센터",
+    { uri: "/my", name: "마이월렛" },
+    { uri: "/notice", name: "알림센터" },
+    { uri: "", name: "우고스" },
+    { uri: "", name: "글로벌직구" },
+    { uri: "", name: "ONDLC 소개" },
+    { uri: "", name: "이용가이드" },
+    { uri: "/center", name: "고객센터" },
   ];
 
   const onOpen = useCallback((e: any) => {
@@ -34,25 +41,37 @@ function Header({ stack = false, navPage = true, visible }: Props) {
     setOpen(true);
   }, []);
 
+  const userLogout = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+      e.preventDefault();
+      if (logout) {
+        const red = confirm("로그아웃을 하시겠습니까?");
+
+        if (red) logout();
+      }
+    },
+    [logout],
+  );
+
   const toggleDrawer = (open: boolean) => {
     setOpen(false);
   };
 
   return (
     <Wrap title={stack || navPage ? "stack" : "default"}>
-      <Drawer openDrawer={open} onClick={toggleDrawer} />
+      <Drawer openDrawer={open} onClick={toggleDrawer} user={user!} userLogout={userLogout} />
       <section
         className={classnames("mainMenu", {
           "mainMenu--hidden": !visible,
         })}
       >
-        <button className="btnSlideMenu" onClick={onOpen}>
+        <button className="btnSlideMenu" onClick={stack ? onPrev : onOpen}>
           icon
         </button>
         <h1>{stack ? "title" : "Logo"}</h1>
         <div className="util">
-          <a>icon</a>
-          <a>icon</a>
+          <Link to="/notice">icon</Link>
+          <Link to="/my">icon</Link>
         </div>
       </section>
       <header className="pc_header">
@@ -62,23 +81,35 @@ function Header({ stack = false, navPage = true, visible }: Props) {
         <nav>
           {menus.map((data, idx) => (
             <Link key={idx} to={data.uri}>
-              <img src={TmpIcon} />
+              <img src={TmpIcon} alt="" />
               <br />
               {data.name}
             </Link>
           ))}
         </nav>
         <div className="util">
-          <div className="boxL">
-            <a href="http://192.168.100.237:8080/oauth/authorize?client_id=cashlink&redirect_uri=http://192.168.100.228:3000/callback&response_type=code">
-              로그인
-            </a>
-            <a>회원가입</a>
-          </div>
+          {user ? (
+            <div className="boxL">
+              <span className="username">
+                {user.user.username}
+                <em>님</em>
+              </span>
+              <a onClick={userLogout}>로그아웃</a>
+            </div>
+          ) : (
+            <div className="boxL">
+              <a
+                href={`${process.env.REACT_APP_AUTH_API_BASE}/oauth/authorize?client_id=cashlink&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=code`}
+              >
+                로그인
+              </a>
+              <a>회원가입</a>
+            </div>
+          )}
           <div className="boxR">
             {utilMenus.map((data, idx) => (
               <div key={idx} style={{ display: "inline-block" }}>
-                <a>{data}</a>
+                <Link to={data.uri}>{data.name}</Link>
                 {utilMenus.length - 1 > idx ? <span /> : null}
               </div>
             ))}
@@ -244,6 +275,17 @@ const Wrap = styled.header`
                         padding: 0 10px;
                         margin-left: 5px;   
                         border-radius: 15px;
+                    }
+
+                    & > .username { 
+                      color: #fff;
+                      font-size: 1.538em;
+                      font-family: NanumSquare;
+
+                      & > em {
+                        color: #999;
+                        font-weight: 600;
+                      }
                     }
                 };
                 

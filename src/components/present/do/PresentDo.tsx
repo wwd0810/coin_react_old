@@ -11,7 +11,7 @@ function PresentDo() {
         <section>
           <div className="inBox">
             <div className="pcOut">
-              <img src={TmpIcon} />
+              <img src={TmpIcon} alt="" />
               <div className="boxR">
                 <span>
                   나의 보유딜링<em>(DLC)</em>
@@ -33,7 +33,7 @@ function PresentDo() {
             </p>
             <p className="boxC">
               <input type="text" />
-              <img src={TmpIcon} />
+              <img src={TmpIcon} alt="" />
             </p>
           </li>
           <li>
@@ -42,7 +42,7 @@ function PresentDo() {
             </p>
             <p className="boxC">
               <input type="text" />
-              <img src={TmpIcon} />
+              <img src={TmpIcon} alt="" />
             </p>
             <p className="boxR">
               <select>

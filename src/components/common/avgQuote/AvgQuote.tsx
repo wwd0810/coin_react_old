@@ -1,13 +1,18 @@
 import React from "react";
 import styled from "styled-components";
 
-function AvgQuote() {
+interface Props {
+  avg: string;
+}
+
+function AvgQuote({ avg }: Props) {
   return (
     <Wrap>
       <div className="inBox">
         <strong>금일 딜링(DLC) 평균시세</strong>
         <p>
-          10,000<em> KRW</em>
+          {avg}
+          <em> KRW</em>
         </p>
       </div>
     </Wrap>

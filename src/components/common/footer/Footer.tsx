@@ -29,7 +29,7 @@ function Footer({ visible, pageNum }: Props) {
         >
           {menus.map((data, idx) => (
             <Link key={idx} className={idx === pageNum ? "active" : ""} to={data.uri}>
-              <img src={TmpIcon} />
+              <img src={TmpIcon} alt="" />
               <br />
               {data.name}
             </Link>
