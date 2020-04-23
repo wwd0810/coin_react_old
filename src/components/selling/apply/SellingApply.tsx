@@ -1,9 +1,61 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 
 import TmpIcon from "assets/tmp.png";
 
-function SellingApply() {
+import { Account } from "stores/users/types";
+
+interface Props {
+  postSell: (quantity: number, price: number) => void;
+  userAccount: Account;
+}
+
+function SellingApply({ postSell, userAccount }: Props) {
+  // ==================== state ====================
+  const [state, setState] = useState({
+    quantity: 0,
+    price: 0,
+  });
+
+  // ==================== Ref ====================
+  // const quantityRef = useRef<HTMLInputElement>(null);
+  // const priceRef = useRef<HTMLInputElement>(null);
+
+  // ==================== useCallback ====================
+  const onQuantityChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault();
+
+      const { value } = e.target;
+
+      if (Number(value) <= userAccount.dl) {
+        setState({ ...state, quantity: Number(value) });
+      } else {
+        alert(`판매 최대 수량은 ${userAccount.dl}개 입니다.`);
+      }
+    },
+    [state, userAccount.dl],
+  );
+
+  const onPriceChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault();
+
+      const { value } = e.target;
+
+      setState({ ...state, price: Number(value) });
+    },
+    [state],
+  );
+
+  const apply = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      postSell(state.quantity, state.price);
+    },
+    [postSell, state.price, state.quantity],
+  );
+
   return (
     <Wrap>
       <div className="dealDlcTop">
@@ -17,7 +69,8 @@ function SellingApply() {
                   <i> : </i>
                 </span>
                 <p>
-                  100,000,000<em> DLC</em>
+                  {userAccount.dl}
+                  <em> DLC</em>
                 </p>
               </div>
             </div>
@@ -31,7 +84,7 @@ function SellingApply() {
               <label>판매수량</label>
             </p>
             <p className="boxC">
-              <input type="text" />
+              <input type="number" value={state.quantity} onChange={onQuantityChange} />
               <img src={TmpIcon} alt="" />
             </p>
           </li>
@@ -40,7 +93,7 @@ function SellingApply() {
               <label>판매수수료</label>
             </p>
             <p className="boxC">
-              <input type="text" readOnly />
+              <input type="text" value={state.quantity * state.price * 0.05} readOnly />
             </p>
             <p className="boxR">DLC</p>
           </li>
@@ -49,7 +102,7 @@ function SellingApply() {
               <label>개당가격</label>
             </p>
             <p className="boxC">
-              <input type="text" />
+              <input type="number" value={state.price} onChange={onPriceChange} />
               <img src={TmpIcon} alt="" />
             </p>
             <p className="boxR">
@@ -80,7 +133,7 @@ function SellingApply() {
               <label>판매가</label>
             </p>
             <p className="boxC">
-              <input type="text" className="cNavy" readOnly />
+              <input type="text" className="cNavy" value={state.quantity * state.price} readOnly />
             </p>
             <p className="boxR">KRW(원)</p>
           </li>
@@ -88,7 +141,7 @@ function SellingApply() {
       </ul>
       <div className="btnWrap">
         <button className="cGray">초기화</button>
-        <button>등록하기</button>
+        <button onClick={apply}>등록하기</button>
       </div>
       <div className="term">
         <p className="inqInfoTxt">

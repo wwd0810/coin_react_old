@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import styled from "styled-components";
 import AvgQuote from "components/common/avgQuote";
 
@@ -15,38 +15,22 @@ interface Props {
 }
 
 function Home({ average, dlList, paging, getList }: Props) {
+  // ====================Refs====================
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  // ====================states====================
   const [state, setState] = useState({
-    search: "",
     sort: "RECENT|DESC",
     page: 0,
     prePage: 0,
     first: true,
   });
 
-  const onSearchChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      e.preventDefault();
-      const { value } = e.target;
-      setState({ ...state, search: value });
-    },
-    [state],
-  );
-
-  const getSearchList = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-
-      getList(state.page, state.sort, state.search);
-    },
-    [getList, state.page, state.search, state.sort],
-  );
-
+  // ====================useCallbacks====================
   const getPageList = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       setState({ ...state, prePage: state.page, page: state.page + 1, first: false });
-
-      // getList(state.page + 1, state.sort, state.search, true);
     },
     [state],
   );
@@ -54,11 +38,9 @@ function Home({ average, dlList, paging, getList }: Props) {
   const sortByRecent = useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.preventDefault();
-
       if (state.sort === "RECENT|DESC")
         setState({ ...state, page: 0, prePage: 0, sort: "RECENT|ASC", first: false });
       else setState({ ...state, page: 0, prePage: 0, sort: "RECENT|DESC", first: false });
-      // 이후 내림, 올림차순 정렬 필요
     },
     [state],
   );
@@ -69,26 +51,35 @@ function Home({ average, dlList, paging, getList }: Props) {
       if (state.sort === "PRICE|DESC")
         setState({ ...state, page: 0, prePage: 0, sort: "PRICE|ASC", first: false });
       else setState({ ...state, page: 0, prePage: 0, sort: "PRICE|DESC", first: false });
-      // 이후 내림, 올림차순 정렬 필요
     },
     [state],
   );
 
+  // ====================functions====================
+  const enterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      // getList(state.page, state.sort, state.search, true);
+      getList(state.page, state.sort, searchRef.current?.value);
+    }
+  };
+
+  // ====================useEffects====================
   useEffect(() => {
     if (!state.first) {
       if (state.prePage !== state.page) {
-        getList(state.page, state.sort, state.search, true);
+        getList(state.page, state.sort, searchRef.current?.value, true);
       } else {
-        getList(state.page, state.sort, state.search);
+        getList(state.page, state.sort, searchRef.current?.value);
       }
     }
-  }, [getList, state.sort, state.page, state.search, state.first, state.prePage]);
+  }, [getList, state.sort, state.page, state.first, state.prePage]);
 
+  // ====================render====================
   return (
     <Wrap>
       <AvgQuote avg={average} />
       <Content>
-        <form className="form" onSubmit={getSearchList}>
+        <form className="form">
           <div className="listTopUtil">
             <div className="boxL">
               <button onClick={sortByRecent}>
@@ -104,8 +95,8 @@ function Home({ average, dlList, paging, getList }: Props) {
               <input
                 type="text"
                 placeholder="딜링갯수 / 판매자ID 검색"
-                value={state.search}
-                onChange={onSearchChange}
+                ref={searchRef}
+                onKeyPress={enterPress}
               />
               <button type="button">
                 <img src={TmpIcon} alt="" />

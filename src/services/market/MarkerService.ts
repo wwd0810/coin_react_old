@@ -1,4 +1,3 @@
-import qs from "query-string";
 import client from "lib/client";
 
 class MarketService {
@@ -12,6 +11,18 @@ class MarketService {
 
   public GetProductDetail(idx: string) {
     return client.get(`/api/markets/${idx}`);
+  }
+
+  public PostSellAPI(data: FormData) {
+    return client.post(`/api/markets/sell`, data);
+  }
+
+  public GetMySellAPI(page: number) {
+    return client.get(`/api/markets/sell`, { params: { page } });
+  }
+
+  public PostBuyApplyAPI(id: number) {
+    return client.post(`/api/markets/${id}/buy`);
   }
 }
 

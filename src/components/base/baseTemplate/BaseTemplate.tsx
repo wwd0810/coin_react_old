@@ -1,12 +1,13 @@
 import React from "react";
 import styled from "styled-components";
+import { inject, observer } from "mobx-react";
+import { withCookies, ReactCookieProps } from "react-cookie";
+import { withRouter, RouteComponentProps } from "react-router";
 
 import Header from "components/common/header";
 import Footer from "components/common/footer";
 import UserStore from "stores/users";
-import { inject, observer } from "mobx-react";
-import { withCookies, ReactCookieProps } from "react-cookie";
-import { withRouter, RouteComponentProps } from "react-router";
+import NoticeStore from "stores/notice";
 
 interface Props extends ReactCookieProps, RouteComponentProps {
   children?: React.ReactNode;
@@ -14,6 +15,7 @@ interface Props extends ReactCookieProps, RouteComponentProps {
   navPage?: boolean;
   pageNum?: number;
   userStore?: UserStore;
+  noticeStore?: NoticeStore;
 }
 
 interface State {
@@ -21,10 +23,11 @@ interface State {
   visible: boolean;
 }
 
-@inject("userStore")
+@inject("userStore", "noticeStore")
 @observer
 class BaseTemplate extends React.Component<Props, State> {
   private UserStore = this.props.userStore! as UserStore;
+  private NoticeStore = this.props.noticeStore! as NoticeStore;
 
   state: State = {
     prevPos: window.pageYOffset,
@@ -66,6 +69,7 @@ class BaseTemplate extends React.Component<Props, State> {
           navPage={this.props.navPage}
           user={this.UserStore.User}
           logout={this.logout}
+          unRead={this.NoticeStore.UnRead!}
         ></Header>
         <Section>{this.props.children}</Section>
         <Footer visible={this.state.visible} pageNum={this.props.pageNum}></Footer>

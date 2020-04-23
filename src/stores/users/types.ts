@@ -11,7 +11,9 @@ export type User = {
 export type Account = {
   id: string;
   user_id: number;
-  balance: number;
+  // balance: number;
+  dl: number;
+  cp: number;
   created_at: Date;
   updated_at: Date;
 };

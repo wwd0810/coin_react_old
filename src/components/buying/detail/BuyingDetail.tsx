@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Dealing } from "stores/market/types";
 
@@ -6,10 +6,21 @@ import TmpIcon from "assets/tmp.png";
 import regex from "lib/regex";
 
 interface Props {
-  product: Dealing;
+  product?: Dealing;
+  buyApply: (id: number) => void;
 }
 
-function BuyingDetail({ product }: Props) {
+function BuyingDetail({ product, buyApply }: Props) {
+  // ==================== useCallbacks ====================
+  const onApply = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.preventDefault();
+      buyApply(product?.id!);
+    },
+    [buyApply, product],
+  );
+
+  // ==================== function ====================
   const getCtoCDay = () => {
     if (product) {
       const today = new Date();
@@ -60,7 +71,9 @@ function BuyingDetail({ product }: Props) {
         <div className="wishBox">
           <button className="wishBtn"></button>
           <div className="btnBox">
-            <button className="btn h35 br2">구매신청</button>
+            <button className="btn h35 br2" onClick={onApply}>
+              구매신청
+            </button>
           </div>
         </div>
       </form>

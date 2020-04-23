@@ -26,6 +26,9 @@ class MarketStore extends BaseStore {
   @observable
   private _product?: Dealing;
 
+  @observable
+  private _mySell: Dealing[] = [];
+
   @computed
   get AverageCondition() {
     return this._averageCondition;
@@ -46,6 +49,11 @@ class MarketStore extends BaseStore {
     return this._product;
   }
 
+  @computed
+  get MySell() {
+    return this._mySell;
+  }
+
   GetAverageCondition = flow(function* (this: MarketStore) {
     this._init("GET_AVERAGE_CONDITION");
     try {
@@ -61,7 +69,7 @@ class MarketStore extends BaseStore {
 
       this._success["GET_AVERAGE_CONDITION"] = true;
     } catch (e) {
-      this._failure["GET_AVERAGE_CONDITION"] = [false, e];
+      this._failure["GET_AVERAGE_CONDITION"] = [true, e];
     } finally {
       this.pending["GET_AVERAGE_CONDITION"] = false;
     }
@@ -88,18 +96,16 @@ class MarketStore extends BaseStore {
       this._paging = paging;
       // more 을 보내면 추가 안보내면 10개 기본 ex) 처음에는 more 안보내랑
       if (more) {
-        console.log("more");
         list.forEach((data) => {
           this._dealingList.push(data);
         });
       } else {
-        console.log("default");
         this._dealingList = list;
       }
 
       this._success["GET_DEALING_LIST"] = true;
     } catch (e) {
-      this._failure["GET_DEALING_LIST"] = [false, e];
+      this._failure["GET_DEALING_LIST"] = [true, e];
     } finally {
       this._pending["GET_DEALING_LIST"] = false;
     }
@@ -119,9 +125,58 @@ class MarketStore extends BaseStore {
       this._product = market;
       this._success["GET_PRODUCT_DETAIL"] = true;
     } catch (e) {
-      this._failure["GET_PRODUCT_DETAIL"] = [false, e];
+      this._failure["GET_PRODUCT_DETAIL"] = [true, e];
     } finally {
       this._pending["GET_PRODUCT_DETAIL"] = false;
+    }
+  });
+
+  PostSell = flow(function* (this: MarketStore, quantity: number, price: number) {
+    this._init("POST_SELL");
+    try {
+      const form = new FormData();
+      form.set("quantity", quantity.toString());
+      form.set("price", price.toString());
+
+      yield MarketService.PostSellAPI(form);
+
+      this._success["POST_SELL"] = true;
+    } catch (e) {
+      this._failure["POST_SELL"] = [true, e];
+    } finally {
+      this._pending["POST_SELL"] = false;
+    }
+  });
+
+  GetMySell = flow(function* (this: MarketStore, page: number) {
+    this._init("GET_MY_SELL");
+    try {
+      const {
+        data: res,
+      }: {
+        data: ApiResult<Dealing[]>;
+      } = yield MarketService.GetMySellAPI(page);
+
+      const data = res.data;
+
+      this._mySell = data;
+      this._success["GET_MY_SELL"] = true;
+    } catch (e) {
+      this._failure["GET_MY_SELL"] = [true, e];
+    } finally {
+      this._pending["GET_MY_SELL"] = false;
+    }
+  });
+
+  PostBuyApply = flow(function* (this: MarketStore, id: number) {
+    this._init("POST_BUY_APPLY");
+    try {
+      yield MarketService.PostBuyApplyAPI(id);
+      this._success["POST_BUY_APPLY"] = true;
+    } catch (e) {
+      this._failure["POST_BUY_APPLY"] = [true, e];
+    } finally {
+      this._pending["POST_BUY_APPLY"] = false;
     }
   });
 }

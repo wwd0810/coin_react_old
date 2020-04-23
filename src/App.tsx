@@ -5,6 +5,7 @@ import { withCookies, ReactCookieProps } from "react-cookie";
 import { inject, observer } from "mobx-react";
 
 import UserStore from "stores/users";
+import NoticeStore from "stores/notice";
 import client from "lib/client";
 
 import HomePage from "pages/home/HomePage";
@@ -37,12 +38,14 @@ interface State {
 
 interface Props extends RouteComponentProps, ReactCookieProps {
   userStore?: UserStore;
+  noticeStore?: NoticeStore;
 }
 
-@inject("userStore")
+@inject("userStore", "noticeStore")
 @observer
 class App extends React.Component<Props, State> {
   private UserStore = this.props.userStore! as UserStore;
+  private NoticeStore = this.props.noticeStore! as NoticeStore;
 
   state = {
     isLoading: true,
@@ -63,14 +66,26 @@ class App extends React.Component<Props, State> {
     }
 
     // ================================================================================
+    //  FCM
+    // ================================================================================
+    window.receiveToken = (str: string) => {
+      this.UserStore.UpdateFcmToken(str);
+    };
+
+    // ================================================================================
     //  자동로그인 및 토큰 설정
     // ================================================================================
 
-    const auth = this.props.cookies!.get("auth");
+    // const auth = this.props.cookies!.get("auth");
+    const auth = window.localStorage.getItem("auth");
     if (auth) {
       const LoginData: string = auth;
       client.defaults.headers.common["Authorization"] = `Bearer ${LoginData}`;
       await this.UserStore.GetUser();
+    }
+
+    if (this.UserStore.IsLoggedIn) {
+      await this.NoticeStore.GetUnRead();
     }
 
     this.setState({ isLoading: false });

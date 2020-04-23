@@ -40,7 +40,8 @@ class CallbackContainer extends React.Component<Props> {
     if (this.UserStore.success["GET_USER_TOKEN"]) {
       const LoginData = this.UserStore.UserToken;
       await this.UserStore.GetUser();
-      this.props.cookies?.set("auth", LoginData, { path: "/" });
+      window.ReactNativeWebView?.postMessage("getToken|");
+      window.localStorage.setItem("auth", LoginData!);
       this.props.history.push("/");
     } else {
       if (this.UserStore.failure["GET_USER_TOKEN"]) {

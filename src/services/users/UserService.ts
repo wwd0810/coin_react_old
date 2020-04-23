@@ -20,6 +20,14 @@ class UserService {
   public GetUserAPI() {
     return client.get(`/api/users/me`);
   }
+
+  public GetUserAccountAPI() {
+    return client.get(`/api/users/me/account`);
+  }
+
+  public UpdateFcmTokenAPI(data: FormData) {
+    return client.put(`/api/users/me/token`, data);
+  }
 }
 
 export default new UserService();

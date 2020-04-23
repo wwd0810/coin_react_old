@@ -1,18 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import styled from "styled-components";
 
 import SellingManage from "components/selling/manage";
 import SellingApply from "components/selling/apply";
 import SellingHistory from "components/selling/history";
 
-function Selling() {
+import { Account } from "stores/users/types";
+
+interface Props {
+  postSell: (quantity: number, price: number) => void;
+  userAccount: Account;
+}
+
+function Selling({ postSell, userAccount }: Props) {
+  // ==================== default data ====================
   const navMenu = ["판매등록", "판매관리", "판매내역"];
+
+  // ==================== states ====================
   const [state, setState] = useState({
     nav: 1,
   });
 
+  // ==================== function ====================
   const items = () => {
-    if (state.nav === 0) return <SellingApply />;
+    if (state.nav === 0) return <SellingApply postSell={postSell} userAccount={userAccount} />;
     if (state.nav === 1) return <SellingManage />;
     if (state.nav === 2) return <SellingHistory />;
 

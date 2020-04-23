@@ -58,6 +58,19 @@ padding: 0 10px;
 box-shadow: none !important;
 }
 
+input[type="number"] {
+height: 42px;
+line-height: 40px;
+border: 1px solid #e0e0e0;
+font-size: 1.071em;
+border-radius: 2px;
+background: #fff;
+padding: 0 10px;
+-webkit-appearance: none;
+box-shadow: none !important;
+appearance: none;
+}
+
 input[type="text"]:read-only {
 background: #f5f7f8;
 }

@@ -42,7 +42,7 @@ function MyWallet({ user }: Props) {
           <img src={TmpIcon} alt="" />
           <p>
             <span>보유딜링</span>
-            <strong>{regex.moneyRegex(user?.account.balance!)}</strong> DLC
+            <strong>{regex.moneyRegex(user?.account.dl!)}</strong> DLC
           </p>
           <Link to="/my/dlcinfo">내역보기</Link>
         </div>

@@ -83,7 +83,7 @@ function Drawer({ openDrawer, onClick, user, userLogout }: Props) {
                 <span>
                   나의 보유딜링<em>(DLC)</em>
                 </span>
-                <p>{regex.moneyRegex(user.account.balance)}</p>
+                <p>{regex.moneyRegex(user.account.dl)}</p>
               </div>
               <Link to="/my" className="myWallet">
                 딜링 스마트 월렛 >

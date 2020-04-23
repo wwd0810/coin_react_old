@@ -15,11 +15,12 @@ interface Props {
   stack?: boolean;
   navPage?: boolean;
   visible?: boolean;
+  unRead?: boolean;
   onPrev?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   logout?: () => void;
 }
 
-function Header({ stack = false, navPage = true, visible, onPrev, user, logout }: Props) {
+function Header({ stack = false, navPage = true, visible, onPrev, user, logout, unRead }: Props) {
   const menus = [
     { uri: "/selling", img: TmpIcon, name: "판매하기" },
     { uri: "/buying", img: TmpIcon, name: "구매하기" },
@@ -70,7 +71,7 @@ function Header({ stack = false, navPage = true, visible, onPrev, user, logout }
         </button>
         <h1>{stack ? "title" : "Logo"}</h1>
         <div className="util">
-          <Link to="/notice">icon</Link>
+          <Link to="/notice">icon {unRead ? <span>N</span> : null}</Link>
           <Link to="/my">icon</Link>
         </div>
       </section>
@@ -109,7 +110,11 @@ function Header({ stack = false, navPage = true, visible, onPrev, user, logout }
           <div className="boxR">
             {utilMenus.map((data, idx) => (
               <div key={idx} style={{ display: "inline-block" }}>
-                <Link to={data.uri}>{data.name}</Link>
+                <Link to={data.uri}>
+                  {data.name}
+                  {unRead && data.name === "알림센터" ? <Alarm>N</Alarm> : null}
+                </Link>
+
                 {utilMenus.length - 1 > idx ? <span /> : null}
               </div>
             ))}
@@ -119,6 +124,22 @@ function Header({ stack = false, navPage = true, visible, onPrev, user, logout }
     </Wrap>
   );
 }
+
+const Alarm = styled.div`
+  display: block;
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  width: 13px;
+  height: 13px;
+  line-height: 14px;
+  padding-bottom: 2px;
+  border-radius: 7px;
+  background: #fa146a;
+  text-align: center;
+  color: #fff;
+  font-size: 9px;
+`;
 
 const Wrap = styled.header`
   /* position: fixed; */
@@ -166,6 +187,22 @@ const Wrap = styled.header`
             display: inline-block;
             height: 20px;
             margin-left: 5px;
+
+            & > span{
+              display: block;
+              position: absolute;
+              top: 0;
+              right: 0;
+              width: 14px;
+              height: 14px;
+              line-height: 14px;
+              padding-top: 1px;
+              border-radius: 7px;
+              background: #fa146a;
+              color: #fff;
+              font-size: 0.714em;
+              text-align: center;
+            }
             }
         }
     }

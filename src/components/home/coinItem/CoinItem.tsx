@@ -20,8 +20,21 @@ function CoinItem({ dealing }: Props) {
     return res;
   };
 
+  const isSelling = () => {
+    if (dealing.status === "PURCHASE_REQUEST_RECEIVED" || dealing.status === "WAITING_FOR_DEPOSIT")
+      return true;
+    return false;
+  };
+
   return (
     <Item>
+      {isSelling() ? (
+        <IsSell>
+          거래
+          <br />
+          진행중
+        </IsSell>
+      ) : null}
       <Link to={`/buying/detail/${dealing.id}`}>
         <p>
           1딜링(DLC) 당 <strong>{regex.moneyRegex(dealing.price)} KRW</strong>
@@ -46,6 +59,22 @@ function CoinItem({ dealing }: Props) {
   );
 }
 
+const IsSell = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px;
+  height: 40px;
+  line-height: 13px;
+  padding-top: 8px;
+  background: #fa085f;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  margin: 0;
+`;
+
 const Item = styled.li`
     position: relative;
     float: left;
@@ -53,7 +82,7 @@ const Item = styled.li`
     height: 130px;
     background: #fff;
     margin: 0 1% 10px 0;
-    border: 1px solid #fff;
+    border:1px solid #fff;
     :nth-child(even) {
         margin-right: 0;
     }
@@ -101,7 +130,7 @@ const Item = styled.li`
             overflow: hidden;
 
             & > strong {
-                float: left;
+                /* float: left; */
                 display: inline-block;
                 height: 30px;
                 line-height: 30px;

@@ -24,6 +24,8 @@ class UserStore extends BaseStore {
   @observable
   private _user?: { user: User; account: Account };
 
+  @observable _userAccount?: Account;
+
   @computed
   get IsLoggedIn() {
     return this._isLoggedIn;
@@ -37,6 +39,11 @@ class UserStore extends BaseStore {
   @computed
   get User() {
     return this._user;
+  }
+
+  @computed
+  get UserAccount() {
+    return this._userAccount;
   }
 
   @action
@@ -72,7 +79,7 @@ class UserStore extends BaseStore {
 
       this._success["GET_USER_TOKEN"] = true;
     } catch (e) {
-      this._failure["GET_USER_TOKEN"] = [false, e];
+      this._failure["GET_USER_TOKEN"] = [true, e];
     } finally {
       this._pending["GET_USER_TOKEN"] = false;
     }
@@ -93,9 +100,43 @@ class UserStore extends BaseStore {
       this._isLoggedIn = true;
       this._success["GET_USER"] = true;
     } catch (e) {
-      this._failure["GET_USER"] = [false, e];
+      this._failure["GET_USER"] = [true, e];
     } finally {
       this._pending["GET_USER"] = false;
+    }
+  });
+
+  GetUserAccount = flow(function* (this: UserStore) {
+    this._init("GET_USER_ACCOUNT");
+    try {
+      const {
+        data: res,
+      }: {
+        data: ApiResult<{ account: Account }>;
+      } = yield UserService.GetUserAccountAPI();
+
+      const { account } = res.data;
+
+      this._userAccount = account;
+      this._success["GET_USER_ACCOUNT"] = true;
+    } catch (e) {
+      this._failure["GET_USER_ACCOUNT"] = [true, e];
+    } finally {
+      this._pending["GET_USER_ACCOUNT"] = false;
+    }
+  });
+
+  UpdateFcmToken = flow(function* (this: UserStore, token: string) {
+    this._init("UPDATE_FCM_TOKEN");
+    try {
+      const form = new FormData();
+      form.set("token", token);
+      yield UserService.UpdateFcmTokenAPI(form);
+      this._success["UPDATE_FCM_TOKEN"] = true;
+    } catch (e) {
+      this._failure["UPDATE_FCM_TOKEN"] = [true, e];
+    } finally {
+      this._pending["UPDATE_FCM_TOKEN"] = false;
     }
   });
 }
