@@ -34,13 +34,13 @@ function NoticeItem({ notice, noticeRead }: Props) {
     else if (notice.sub_type === "INQUIRY_RESPONSE") return "1:1문의답변";
     else if (notice.sub_type === "RELEASE_RESTRICT") return "제재해제알림";
     else if (notice.sub_type === "RESTRICT") return "제재알림";
-    else return "";
+    else return "기타";
   };
 
   return (
     <Wrap>
       <p>
-        <strong>{notice.created_at.toString()}</strong>
+        <strong>{notice.createdDate.toString()}</strong>
         {notice.status === "NOT_READ" ? (
           <button className="alarm" onClick={onNoticeRead}></button>
         ) : null}

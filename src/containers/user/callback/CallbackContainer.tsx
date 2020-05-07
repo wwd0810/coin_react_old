@@ -44,7 +44,7 @@ class CallbackContainer extends React.Component<Props> {
       window.localStorage.setItem("auth", LoginData!);
       this.props.history.push("/");
     } else {
-      if (this.UserStore.failure["GET_USER_TOKEN"]) {
+      if (this.UserStore.failure["GET_USER_TOKEN"][0]) {
         alert("로그인 실패");
       }
     }

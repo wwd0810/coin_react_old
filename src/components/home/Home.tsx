@@ -1,5 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
+
 import AvgQuote from "components/common/avgQuote";
 
 import { Dealing, Paging } from "stores/market/types";
@@ -15,6 +17,9 @@ interface Props {
 }
 
 function Home({ average, dlList, paging, getList }: Props) {
+  // ====================hooks====================
+  const [t] = useTranslation();
+
   // ====================Refs====================
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -83,18 +88,18 @@ function Home({ average, dlList, paging, getList }: Props) {
           <div className="listTopUtil">
             <div className="boxL">
               <button onClick={sortByRecent}>
-                최신순
+                {t("common.sort.recent")}
                 <img src={TmpIcon} alt="" />
               </button>
               <button onClick={sortByPrice}>
-                가격순
+                {t("common.sort.price")}
                 <img src={TmpIcon} alt="" />
               </button>
             </div>
             <div className="boxR">
               <input
                 type="text"
-                placeholder="딜링갯수 / 판매자ID 검색"
+                placeholder={t("search.placeholder.market")}
                 ref={searchRef}
                 onKeyPress={enterPress}
               />
@@ -104,7 +109,9 @@ function Home({ average, dlList, paging, getList }: Props) {
             </div>
           </div>
         </form>
-        <CoinList dlList={dlList} paging={paging} getList={getList} getPage={getPageList} />
+        {dlList ? (
+          <CoinList dlList={dlList} paging={paging} getList={getList} getPage={getPageList} />
+        ) : null}
       </Content>
     </Wrap>
   );

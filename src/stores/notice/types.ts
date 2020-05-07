@@ -34,8 +34,10 @@ export type Notice = {
     | "SALES_COMPLETE"
     | "INQUIRY_RESPONSE"
     | "RELEASE_RESTRICT"
-    | "RESTRICT";
+    | "RESTRICT"
+    | "ETC";
   status: "NOT_READ" | "READ";
-  created_at: Date;
-  updated_at: Date;
+  createdDate: Date;
+  modifiedDate: Date;
+  user_id: number;
 };

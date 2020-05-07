@@ -1,10 +1,12 @@
 import React from "react";
 import { withRouter, RouteComponentProps } from "react-router";
 import { withCookies, ReactCookieProps } from "react-cookie";
+import { observer, inject } from "mobx-react";
 
 import MyWallet from "components/user/my";
 import UserStore from "stores/users";
-import { observer, inject } from "mobx-react";
+
+import parse from "lib/parse";
 
 interface Props extends RouteComponentProps, ReactCookieProps {
   userStore?: UserStore;
@@ -17,6 +19,10 @@ class MyContainer extends React.Component<Props> {
 
   async componentDidMount() {
     await this.UserStore.GetUser();
+    if (this.UserStore.failure["GET_USER"][0]) {
+      const code = parse(this.UserStore.failure["GET_USER"][1]);
+      alert(code);
+    }
   }
 
   render() {

@@ -14,6 +14,8 @@ import "react-app-polyfill/ie11";
 
 import RootStore from "stores";
 
+import "lang/i18n";
+
 const stores = new RootStore();
 
 ReactDOM.render(

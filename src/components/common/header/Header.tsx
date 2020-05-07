@@ -4,6 +4,7 @@ import React, { useState, useCallback } from "react";
 import styled from "styled-components";
 import classnames from "classnames";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import Drawer from "components/common/drawer";
 
@@ -21,22 +22,29 @@ interface Props {
 }
 
 function Header({ stack = false, navPage = true, visible, onPrev, user, logout, unRead }: Props) {
+  // ==================== hooks ====================
+  const [t] = useTranslation();
+
+  // ==================== options ====================
   const menus = [
-    { uri: "/selling", img: TmpIcon, name: "판매하기" },
-    { uri: "/buying", img: TmpIcon, name: "구매하기" },
-    { uri: "/present", img: TmpIcon, name: "선물하기" },
-  ];
-  const [open, setOpen] = useState<boolean>(false);
-  const utilMenus = [
-    { uri: "/my", name: "마이월렛" },
-    { uri: "/notice", name: "알림센터" },
-    { uri: "", name: "우고스" },
-    { uri: "", name: "글로벌직구" },
-    { uri: "", name: "ONDLC 소개" },
-    { uri: "", name: "이용가이드" },
-    { uri: "/center", name: "고객센터" },
+    { uri: "/selling", img: TmpIcon, name: t("common.nav.sell") },
+    { uri: "/buying", img: TmpIcon, name: t("common.nav.buy") },
+    { uri: "/present", img: TmpIcon, name: t("common.nav.present") },
   ];
 
+  const utilMenus = [
+    { uri: "/my", name: t("common.nav.my_wallet") },
+    { uri: "/notice", name: t("common.nav.notice") },
+    { uri: "", name: t("common.nav.bazaro") },
+    { uri: "", name: t("common.nav.global_shopping") },
+    { uri: "", name: t("common.nav.cashlink_intro") },
+    { uri: "", name: t("common.nav.tutorial") },
+    { uri: "/center", name: t("common.nav.center") },
+  ];
+  // ==================== states ====================
+  const [open, setOpen] = useState<boolean>(false);
+
+  // ==================== useCallback ====================
   const onOpen = useCallback((e: any) => {
     e.preventDefault();
     setOpen(true);
@@ -46,14 +54,15 @@ function Header({ stack = false, navPage = true, visible, onPrev, user, logout, 
     (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
       e.preventDefault();
       if (logout) {
-        const red = confirm("로그아웃을 하시겠습니까?");
+        const red = confirm(t("alert.msg.logout"));
 
         if (red) logout();
       }
     },
-    [logout],
+    [logout, t],
   );
 
+  // ==================== function ====================
   const toggleDrawer = (open: boolean) => {
     setOpen(false);
   };
@@ -77,7 +86,7 @@ function Header({ stack = false, navPage = true, visible, onPrev, user, logout, 
       </section>
       <header className="pc_header">
         <h1>
-          <a href="/">Logo</a>
+          <a href="/home">Logo</a>
         </h1>
         <nav>
           {menus.map((data, idx) => (
@@ -93,18 +102,18 @@ function Header({ stack = false, navPage = true, visible, onPrev, user, logout, 
             <div className="boxL">
               <span className="username">
                 {user.user.username}
-                <em>님</em>
+                <em>{t("common.nav.user")}</em>
               </span>
-              <a onClick={userLogout}>로그아웃</a>
+              <a onClick={userLogout}>{t("common.nav.logout")}</a>
             </div>
           ) : (
             <div className="boxL">
               <a
                 href={`${process.env.REACT_APP_AUTH_API_BASE}/oauth/authorize?client_id=cashlink&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=code`}
               >
-                로그인
+                {t("common.nav.login")}
               </a>
-              <a>회원가입</a>
+              <a>{t("common.nav.signup")}</a>
             </div>
           )}
           <div className="boxR">
@@ -112,7 +121,7 @@ function Header({ stack = false, navPage = true, visible, onPrev, user, logout, 
               <div key={idx} style={{ display: "inline-block" }}>
                 <Link to={data.uri}>
                   {data.name}
-                  {unRead && data.name === "알림센터" ? <Alarm>N</Alarm> : null}
+                  {unRead && data.name === t("common.nav.notice") ? <Alarm>N</Alarm> : null}
                 </Link>
 
                 {utilMenus.length - 1 > idx ? <span /> : null}

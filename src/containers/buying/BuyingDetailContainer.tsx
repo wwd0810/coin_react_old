@@ -28,7 +28,7 @@ class BuyingDetailContainer extends React.Component<Props> {
     if (this.MarketStore.success["POST_BUY_APPLY"]) {
       alert("구매신청에 성공하였습니다.");
     } else {
-      if (this.MarketStore.failure["POST_BUY_APPLY"]) {
+      if (this.MarketStore.failure["POST_BUY_APPLY"][0]) {
         const code = parse(this.MarketStore.failure["POST_BUY_APPLY"][1]);
         alert(code);
       }

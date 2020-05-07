@@ -16,6 +16,9 @@ declare global {
   };
   type Failure = { [key: string]: [boolean, null | AxiosError] };
 
+  // ==================== paging ====================
+
+  // ==================== window ====================
   interface Window {
     Kakao: any;
     kakao: any;

@@ -88,19 +88,31 @@ class MarketStore extends BaseStore {
       const {
         data: res,
       }: {
-        data: ApiResult<{ paging: Paging; list: Dealing[] }>;
+        data: ApiResult<{
+          content: Dealing[];
+          paging: Paging;
+          // pageable: Pageable;
+          // totalPages: number;
+          // totalElements: number;
+          // last: boolean;
+          // size: number;
+          // sort: Sort;
+          // numberOfElements: number;
+          // first: boolean;
+          // empty: boolean;
+        }>;
       } = yield MarketService.GetDlListAPI(page, order, query);
 
-      const { paging, list } = res.data;
+      const { content, paging } = res.data;
 
       this._paging = paging;
       // more 을 보내면 추가 안보내면 10개 기본 ex) 처음에는 more 안보내랑
       if (more) {
-        list.forEach((data) => {
+        content.forEach((data) => {
           this._dealingList.push(data);
         });
       } else {
-        this._dealingList = list;
+        this._dealingList = content;
       }
 
       this._success["GET_DEALING_LIST"] = true;

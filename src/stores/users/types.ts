@@ -1,11 +1,12 @@
 export type User = {
   id: number;
   username: string;
+  name: string;
   phone: string;
   birth: Date;
   sex: string;
-  created_at: Date;
-  updated_at: Date;
+  createdDate: Date;
+  modifiedDate: Date;
 };
 
 export type Account = {
@@ -14,6 +15,6 @@ export type Account = {
   // balance: number;
   dl: number;
   cp: number;
-  created_at: Date;
-  updated_at: Date;
+  createdDate: Date;
+  modifiedDate: Date;
 };

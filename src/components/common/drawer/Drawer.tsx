@@ -2,11 +2,12 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import MTDrawer from "@material-ui/core/Drawer";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import TmpIcon from "assets/tmp.png";
 import { User, Account } from "stores/users/types";
 import regex from "lib/regex";
-import { Link } from "react-router-dom";
 
 interface Props {
   user: { user: User; account: Account };
@@ -25,8 +26,14 @@ function Drawer({ openDrawer, onClick, user, userLogout }: Props) {
   //   [login],
   // );
   // ================================= //
+
+  // ==================== hooks ====================
+  const [t] = useTranslation();
+
+  // ==================== options ====================
   const menus = ["우고스", "글로벌직구", "ONDLC 소개", "이용가이드"];
 
+  // ==================== useCallback ====================
   const tmp = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
@@ -50,27 +57,28 @@ function Drawer({ openDrawer, onClick, user, userLogout }: Props) {
             <div className="beTit">
               <img src={TmpIcon} alt="1" />
               <h3>
-                안녕하세요.
+                {t("drawer.label.welcome")}
                 <br />
-                ONDLC 입니다.
+                {t("drawer.label.intro")}
               </h3>
-              <p>회원 서비스 이용을 위해 로그인 해주세요.</p>
+              <p>{t("drawer.label.plz_login")}</p>
             </div>
             <a
               href={`${process.env.REACT_APP_AUTH_API_BASE}/oauth/authorize?client_id=cashlink&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=code`}
             >
-              로그인
+              {t("common.nav.login")}
             </a>
           </>
         ) : (
           <>
             <div className="topInfo">
               <p>
-                안녕하세요. ONDLC입니다.
+                {t("drawer.label.welcome")}
+                {t("drawer.label.intro")}
                 <br />
                 <strong>
                   {user.user.username}
-                  <em>님</em>
+                  <em>{t("common.nav.user")}</em>
                 </strong>
               </p>
               <button>
@@ -81,15 +89,16 @@ function Drawer({ openDrawer, onClick, user, userLogout }: Props) {
               <img src={TmpIcon} alt="1" />
               <div className="boxR">
                 <span>
-                  나의 보유딜링<em>(DLC)</em>
+                  {t("drawer.label.my_dealing")}
+                  <em>(DLC)</em>
                 </span>
                 <p>{regex.moneyRegex(user.account.dl)}</p>
               </div>
               <Link to="/my" className="myWallet">
-                딜링 스마트 월렛 >
+                {t("drawer.label.smart_wallet")} >
               </Link>
               <span className="bank">
-                나의계좌
+                {t("drawer.label.my_account")}
                 <strong>{user.account.id}</strong>
               </span>
             </div>
@@ -102,8 +111,8 @@ function Drawer({ openDrawer, onClick, user, userLogout }: Props) {
             </ul>
             <div className="csInfo">
               <p className="bt0">
-                - <strong>고객센터 :</strong> 1800-4951
-                <br />- <strong>이용시간(평일) :</strong> 10:00 ~ 18:30
+                - <strong>{t("common.nav.center")}</strong> {t("drawer.label.tel")}
+                <br />- <strong>{t("drawer.label.center_time")}</strong> {t("drawer.label.time")}
               </p>
             </div>
             <a className="btnLogout" onClick={userLogout}>

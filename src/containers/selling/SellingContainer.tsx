@@ -1,11 +1,14 @@
 import React from "react";
 import { withRouter, RouteComponentProps } from "react-router";
 import { withCookies, ReactCookieProps } from "react-cookie";
+import { inject, observer } from "mobx-react";
 
 import Selling from "components/selling";
+
 import MarketStore from "stores/market";
-import { inject, observer } from "mobx-react";
 import UserStore from "stores/users";
+
+import parse from "lib/parse";
 
 interface Props extends RouteComponentProps, ReactCookieProps {
   marketStore?: MarketStore;
@@ -30,8 +33,9 @@ class SellingContainer extends React.Component<Props> {
       await this.UserStore.GetUserAccount();
       alert("딜링판매 성공");
     } else {
-      if (this.MarketStore.failure["POST_SELL"]) {
-        alert("딜링판매 성공");
+      if (this.MarketStore.failure["POST_SELL"][0]) {
+        const code = parse(this.MarketStore.failure["POST_SELL"][1]);
+        alert(code);
       }
     }
   };

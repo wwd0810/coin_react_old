@@ -93,7 +93,7 @@ function SellingApply({ postSell, userAccount }: Props) {
               <label>판매수수료</label>
             </p>
             <p className="boxC">
-              <input type="text" value={state.quantity * state.price * 0.05} readOnly />
+              <input type="text" value={state.quantity * state.price * 0.005} readOnly />
             </p>
             <p className="boxR">DLC</p>
           </li>

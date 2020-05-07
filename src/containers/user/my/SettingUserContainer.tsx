@@ -1,10 +1,11 @@
 import React from "react";
 import { withRouter, RouteComponentProps } from "react-router";
 import { withCookies, ReactCookieProps } from "react-cookie";
+import { inject, observer } from "mobx-react";
 
 import SettingUser from "components/user/my/setting/SettingUser";
 import UserStore from "stores/users";
-import { inject, observer } from "mobx-react";
+import parse from "lib/parse";
 
 interface Props extends RouteComponentProps, ReactCookieProps {
   userStore?: UserStore;
@@ -17,6 +18,10 @@ class SettingUserContainer extends React.Component<Props> {
 
   async componentDidMount() {
     this.UserStore.GetUser();
+    if (this.UserStore.failure["GET_USER"][0]) {
+      const code = parse(this.UserStore.failure["GET_USER"][1]);
+      alert(code);
+    }
   }
 
   render() {

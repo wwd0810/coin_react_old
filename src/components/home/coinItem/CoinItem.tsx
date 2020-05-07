@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { Dealing } from "stores/market/types";
 import regex from "lib/regex";
@@ -12,12 +13,16 @@ interface Props {
 }
 
 function CoinItem({ dealing }: Props) {
+  // ==================== hooks ====================
+  const [t] = useTranslation();
+
+  // ==================== funtions ====================
   const getCtoCDay = () => {
     const today = new Date();
-    const createdDay = new Date(dealing.created_at);
+    const createdDay = new Date(dealing.createdDate);
     const gap = today.getTime() - createdDay.getTime();
     const res = Math.floor(gap / (1000 * 60 * 60 * 24));
-    return res;
+    return res + 1;
   };
 
   const isSelling = () => {
@@ -30,28 +35,38 @@ function CoinItem({ dealing }: Props) {
     <Item>
       {isSelling() ? (
         <IsSell>
-          거래
+          {t("common.label.deal")}
           <br />
-          진행중
+          {t("common.label.continue")}
         </IsSell>
       ) : null}
       <Link to={`/buying/detail/${dealing.id}`}>
         <p>
-          1딜링(DLC) 당 <strong>{regex.moneyRegex(dealing.price)} KRW</strong>
-          <span> | {getCtoCDay()}일전</span>
+          {t("market.label.dealing_currency")}{" "}
+          <strong>
+            {regex.moneyRegex(dealing.price)} {t("market.label.currency")}
+          </strong>
+          <span>
+            {" "}
+            | {getCtoCDay()}
+            {t("market.label.day")}
+          </span>
         </p>
         <p className="bot">
           <strong>
-            {regex.moneyRegex(dealing.quantity)} <em>DLC</em>
+            {regex.moneyRegex(dealing.quantity)} <em>{t("market.label.dlc")}</em>
           </strong>
           <strong>
-            {regex.moneyRegex(dealing.price * dealing.quantity)} <em>KRW</em>
+            {regex.moneyRegex(dealing.price * dealing.quantity)}{" "}
+            <em>{t("market.label.currency")}</em>
           </strong>
         </p>
         <p className="seller">
-          <span className="userInfo">판매자 {dealing.user.username}</span>
+          <span className="userInfo">
+            {t("market.label.seller")} {dealing.seller.username}
+          </span>
           <span className="auth">
-            <img src={TmpIcon} alt="" /> 인증
+            <img src={TmpIcon} alt="" /> {t("market.label.certification")}
           </span>
         </p>
       </Link>

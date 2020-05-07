@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
+
 import CoinItem from "../coinItem";
 
 import { Dealing, Paging } from "stores/market/types";
@@ -12,6 +14,9 @@ interface Props {
 }
 
 function CoinList({ dlList, paging, getPage }: Props) {
+  // ==================== hooks ====================
+  const [t] = useTranslation();
+
   return (
     <Wrap>
       {dlList.map((data, idx) => (
@@ -19,8 +24,9 @@ function CoinList({ dlList, paging, getPage }: Props) {
       ))}
       <div className="btn-wrap">
         {paging ? (
-          paging.count / paging.limit > paging.page + 1 ? (
-            <button onClick={getPage}>더보기</button>
+          // paging.count / paging.limit > paging.page + 1 ? (
+          paging.limit === 10 ? (
+            <button onClick={getPage}>{t("common.button.more")}</button>
           ) : null
         ) : null}
       </div>

@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import classnames from "classnames";
+import { useTranslation } from "react-i18next";
 
 import TmpIcon from "assets/tmp.png";
 import { Link } from "react-router-dom";
@@ -11,11 +12,15 @@ interface Props {
 }
 
 function Footer({ visible, pageNum }: Props) {
+  //  ==================== hooks ====================
+  const [t] = useTranslation();
+
+  //  ==================== options ====================
   const menus = [
-    { uri: "/home", name: "홈" },
-    { uri: "/selling", name: "판매하기" },
-    { uri: "/buying", name: "구매하기" },
-    { uri: "/present", name: "선물하기" },
+    { uri: "/home", name: t("common.nav.home") },
+    { uri: "/selling", name: t("common.nav.sell") },
+    { uri: "/buying", name: t("common.nav.buy") },
+    { uri: "/present", name: t("common.nav.present") },
   ];
 
   return (
@@ -41,20 +46,26 @@ function Footer({ visible, pageNum }: Props) {
           <div className="footOut">
             <h1>Logo</h1>
             <div>
-              <strong>(주)온디엘씨</strong>
+              <strong>{t("common.footer.company")}</strong>
               <br />
-              대표이사 : 강찬고 | 사업자등록번호 : 715-86-01032 | 서울특별시 강남구 테헤란로69길 5,
-              6층 (삼성동 유기타워)
+              {t("common.footer.owner")} : | {t("common.footer.license")} |{" "}
+              {t("common.footer.address")}
               <br />
-              개인정보관리책임자 : 강찬고 | 이메일 : info@ondlc.com | 대표전화 : 1800-4951
+              {t("common.footer.privacy_officer")} | {t("common.footer.email")}|{" "}
+              {t("common.footer.tel")}1
             </div>
           </div>
         </div>
         <div className="bot">
-          ONDLC는 통신판매 중개자이며, 통신판매의 당사자가 아닙니다.
+          {`${t("common.footer.article")}`.split(".").map((data, idx) => (
+            <i key={idx}>
+              {data}.{idx === 0 ? <br /> : null}
+            </i>
+          ))}
+          {/* ONDLC는 통신판매 중개자이며, 통신판매의 당사자가 아닙니다.
           <br />
-          따라서 ONDLC는 판매자가 등록한 상품, 거래정보 및 거래에 대하여 책임을 지지않습니다.
-          <span>2018 © All rights reserved by ONDLC</span>
+          따라서 ONDLC는 판매자가 등록한 상품, 거래정보 및 거래에 대하여 책임을 지지않습니다. */}
+          <span>{t("common.footer.copyright")}</span>
         </div>
       </footer>
     </Wrap>

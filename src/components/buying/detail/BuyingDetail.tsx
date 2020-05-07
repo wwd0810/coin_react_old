@@ -1,5 +1,7 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
+
 import { Dealing } from "stores/market/types";
 
 import TmpIcon from "assets/tmp.png";
@@ -11,6 +13,9 @@ interface Props {
 }
 
 function BuyingDetail({ product, buyApply }: Props) {
+  // ==================== hooks ====================
+  const [t] = useTranslation();
+
   // ==================== useCallbacks ====================
   const onApply = useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -24,18 +29,21 @@ function BuyingDetail({ product, buyApply }: Props) {
   const getCtoCDay = () => {
     if (product) {
       const today = new Date();
-      const createdDay = new Date(product.created_at);
+      const createdDay = new Date(product.createdDate);
       const gap = today.getTime() - createdDay.getTime();
       const res = Math.floor(gap / (1000 * 60 * 60 * 24));
-      return res;
+      return res + 1;
     }
   };
   return (
     <Wrap>
       <div className="dlcViewLabel mb15">
         <div className="basicWd">
-          <div className="boxL">{product ? product.user.username : null}</div>
-          <span>{getCtoCDay()}일전 등록</span>
+          <div className="boxL">{product ? product.seller.username : null}</div>
+          <span>
+            {getCtoCDay()}
+            {t("market.detail.day")}
+          </span>
         </div>
       </div>
       <div className="dlcViewInfo mb5">
