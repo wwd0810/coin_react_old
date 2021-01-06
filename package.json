@@ -18,7 +18,7 @@
     "@types/redux-actions": "^2.6.1",
     "@types/redux-logger": "^3.0.7",
     "@types/styled-components": "^5.0.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "classnames": "^2.2.6",
     "i18next": "^19.4.3",
     "i18next-browser-languagedetector": "^4.1.1",
